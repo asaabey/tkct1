@@ -24,9 +24,8 @@ namespace tkct1.RuleEngine.Rules
         public override void Define()
         {
             Patient p = null;
-            When()
-                //.Match<Patient>(() => p, o => o.Date_of_death == null);
-                .Match(() => p, o => o.Date_of_death == null);
+            When()                
+                .Match(() => p,  o => o.IsValid==true, o => o.Date_of_death == null);
                 //.Match(() => p)
                 //.Exists<PatientStatus>(ps=>ps.Alive==true)
                 ;
@@ -36,6 +35,7 @@ namespace tkct1.RuleEngine.Rules
                 .Do(ctx => SetAliveStatusTrue(p))
                 .Do(ctx => SetAge(p))
                 .Do(ctx => SetFlagCalculatedAge(p))
+                
                 .Yield(ctx => new PatientStatus(true));
                 
 
@@ -63,10 +63,12 @@ namespace tkct1.RuleEngine.Rules
         {
             Patient p = null;
             When()
-                .Match<Patient>(() => p, o => o.Date_of_death != null);
+                .Match<Patient>(() => p,o=>o.Status.Alive!=false, o => o.Date_of_death != null);
             Then()
-                //.Do(ctx => SetAliveStatusFalse(p));
-                .Yield(ctx => new PatientStatus(true));
+                .Do(ctx => SetAliveStatusFalse(p))
+                .Do(ctx=>ctx.Update(p))
+                ;
+                //.Yield(ctx => new PatientStatus(true));
                 //.Do(ctx =>  );
         }
         private static void SetAliveStatusFalse(Patient p)
@@ -105,7 +107,7 @@ namespace tkct1.RuleEngine.Rules
             Patient p = null;
 
             When()
-                .Match<Patient>(() => p, o => o.TSDataPoints.Where(x => x.Type == "Coded").Count() > 0);
+                .Match<Patient>(() => p, o => o.IsValid == true,o => o.TSDataPoints.Where(x => x.Type == "Coded").Count() > 0);
             Then()
                 .Do(_ => p.Notifications.Add(new Notification() { Message = "Coded TSD found", TimeStamp = DateTime.Now }));
         }
@@ -119,50 +121,14 @@ namespace tkct1.RuleEngine.Rules
             
 
             When()
-                .Match<Patient>(() => p, o => o.TSDataPoints.Where(x => x.Type == "Numeric").Count() > 0)
-                //.Query<List<TSDataPoint>>(()=>tsdps, l1=>l1.Match<TSDataPoint>(l2=>l2.Type=="Numeric",l2=>l2.)
+                .Match<Patient>(() => p, o => o.IsValid == true, o => o.TSDataPoints.Where(x => x.Type == "Numeric").Count() > 0)
+                
                 ;
 
             Then()
                 .Do(_ => p.Notifications.Add(new Notification() { Message = "Numeric TSD founded", TimeStamp = DateTime.Now }));
         }
     }
-    //public class HasEgfrTSD : Rule
-    //{
-    //    public override void Define()
-    //    {
-    //        Patient p = null;
-
-    //        List<TSDataPoint> tspds = null;
-
-    //        TSDataPoint t = null;
-
-    //        When()
-    //            .Match
-                
-    //            .Match<Patient>(() => p, o => o.TSDataPoints.Where(x => x.Component == "eGFR").Count()>0)
-    //            .Query(()=>tspds, a=>a.Match<TSDataPoint>(b=>b.Component=="eGFR").Collect() )
-    //            //.Query<List<TSDataPoint>>(()=>tsdps, l1=>l1.Match<TSDataPoint>(l2=>l2.Type=="Numeric",l2=>l2.)
-    //            //.Let<TSDataPoint>(() => t, () => p.TSDataPoints.LastOrDefault())
-    //            .Let<TSDataPoint>(() => t, () => tspds.LastOrDefault())
-    //            ;
-
-    //        Then()
-    //            .Do(_ => Console.WriteLine("--------------->{0}", t.ToString()))
-    //            //.Do(_ => Console.WriteLine("--fired->"))
-    //            //.Do(ctx => LasteGFR(t))
-    //            .Do(_ => p.Notifications.Add(new Notification() { Message = "eGFR TSD found->", TimeStamp = DateTime.Now }))
-                
-                
-    //            ;
-    //    }
-
-    //    private static void LasteGFR(TSDataPoint t)
-    //    {
-    //        Console.WriteLine("--------------->{0}", t.ToString());
-            
-    //    }
-
-
-    //}
+  
+    
 }

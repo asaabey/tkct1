@@ -18,14 +18,13 @@ namespace tkct1.DomainModel
         public string Post_code { get; set; }
         public Nullable<int> Age { get; set; }
         
+        public bool IsValid { get; set; }
 
         public Status Status { get; set; }
 
-        public List<Notification> Notifications { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
 
-        //public List<Result> Results { get; set; }
-
-        public List<TSDataPoint> TSDataPoints { get; set; }
+        public ICollection<TSDataPoint> TSDataPoints { get; set; }
 
         override public string  ToString()
         {
@@ -37,6 +36,70 @@ namespace tkct1.DomainModel
             Status = new Status();
             TSDataPoints = new List<TSDataPoint>();
             Notifications = new List<Notification>();
+            IsValid = true;
+        }
+
+        public bool HasComponent(string component)
+        {
+            bool _r = false;
+
+            if (TSDataPoints.Count>0)
+            {
+                var c = TSDataPoints.Where(o => o.Component == component).Count();
+
+                if (c>0)
+                {
+                    _r = true;
+                }
+            }
+
+            return _r;
+        }
+
+        public TSDataPoint GetLastTimeSeriesDataPoint(string component)
+        {
+            TSDataPoint _t = new TSDataPoint();
+
+            if (TSDataPoints.Count>0)
+            {
+                var c = TSDataPoints.Where(o => o.Component == component).LastOrDefault();
+
+                if (c!=null)
+                {
+                    _t = c;
+                }
+            }
+            return _t;
+        }
+
+        public TSDataPoint GetNthTimeSeriesDataPointWithOffset(string component, int dayoffset, int rank)
+        {
+            TSDataPoint _t = new TSDataPoint();
+
+            IList<TSDataPoint> _tsdps = TSDataPoints.Where(o=>o.Component==component).ToList();
+
+            if (_tsdps.Count>0)
+            {
+                int _lastIndex = _tsdps.Count - 1;
+
+                for (int i = 0; i < _lastIndex; i++)
+                {
+                    int _ts = ((TimeSpan)(_tsdps[_lastIndex].Date - _tsdps[i].Date)).Days;
+                    if (_ts>dayoffset)
+                    {
+                        _t = _tsdps[i];
+                        break;
+                    }
+                }
+
+            }
+
+            return _t;
+        }
+
+        public int GetComponentCount(string component)
+        {
+            return TSDataPoints.Where(o => o.Component == component).Count();
         }
     }
 }

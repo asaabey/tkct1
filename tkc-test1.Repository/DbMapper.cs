@@ -101,7 +101,7 @@ namespace tkct1.DAL
 		                            r.date_recorded AS [Date]
                                 FROM tkc_registry.patient_registrations as p
                                 LEFT JOIN cte1 AS r ON r.patient_registration_id= p.id
-                                WHERE p.id=" + Id + "";
+                                WHERE p.id=" + Id + " ORDER BY r.date_recorded";
                             
 
 
@@ -138,7 +138,7 @@ namespace tkct1.DAL
             using (var con = new SqlConnection(Connection.GetConnectionString()))
             {
                 string sql = @"
-                        SELECT TOP(20) id FROM tkc_registry.patient_registrations WHERE id>2000
+                        SELECT TOP(100) id FROM tkc_registry.patient_registrations WHERE id>12000
                 ";
 
                 var r = con.Query<int>(sql).ToList();

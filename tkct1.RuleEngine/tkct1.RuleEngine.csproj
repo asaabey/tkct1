@@ -52,7 +52,8 @@
     <Compile Include="RuleStack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\AssessStatus.cs" />
-    <Compile Include="Rules\OldPatientRule.cs" />
+    <Compile Include="Rules\CkdClassification\CGA_G.cs" />
+    <Compile Include="Rules\Validation\ValidateDatesRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

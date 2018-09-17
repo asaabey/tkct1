@@ -52,6 +52,11 @@ namespace tkct1
             
             rs.Execute(p);
             Console.WriteLine("Age calc done: {3},Patient Age: {0},  Invalid Age Flag:{1}, Alive: {2}", p.Age,p.Status.FlagInvalidAge, p.Status.Alive, p.Status.FlagCalculatedAge);
+
+           
+
+
+
             foreach (var n in p.Notifications)
             {
                 Console.WriteLine("--> {0}: {1} |",n.TimeStamp,n.Message);
