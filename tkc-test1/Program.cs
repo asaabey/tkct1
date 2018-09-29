@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using tkc_test1.Repository;
 using tkct1.DAL;
 using tkct1.DomainModel;
 using tkct1.RuleEngine;
@@ -23,9 +24,14 @@ namespace tkct1
 
         static void PatientList()
         {
-            DbMapper db = new DbMapper();
+            //DbMapper db = new DbMapper();
+
+            LocalDb db = new LocalDb();
+
+            //var plist = db.GetPatientIdList();
 
             var plist = db.GetPatientIdList();
+            
             foreach (var id in plist)
             {
                 Console.WriteLine("id:{0}",id);
@@ -36,7 +42,9 @@ namespace tkct1
 
         static void ProcessSinglePatient(int id)
         {
-            DbMapper db = new DbMapper();
+            //DbMapper db = new DbMapper();
+
+            LocalDb db = new LocalDb();
 
             Patient p = new Patient();
 
